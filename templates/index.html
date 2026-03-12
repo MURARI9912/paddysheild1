@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PaddyShield</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Telugu&family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --leaf:#2a6e2a;--leaf2:#1a4e1a;--leaf-pale:#edf7ed;--leaf-mid:#c5e8c5;
+  --soil:#5c3d1e;--husk:#f0e8d5;--rice:#faf7f0;
+  --water:#2e7ca8;--sky:#e8f4fb;
+  --sun:#e8a020;--sun-pale:#fff8e8;
+  --red:#c0392b;--red-pale:#fdf0ef;
+  --amber:#d97706;--amber-pale:#fffbeb;
+  --text:#1a1a1a;--muted:#6b6b6b;--border:#e8e8e8;
+  --white:#fff;
+  --shadow:0 2px 12px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--rice);min-height:100vh;color:var(--text)}
+
+/* ── TOP NAV ── */
+.topnav{background:linear-gradient(135deg,var(--leaf2) 0%,var(--leaf) 100%);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0}
+.nav-logo{display:flex;align-items:center;gap:10px;padding:14px 0;margin-right:auto}
+.nav-logo span{font-family:'Fraunces',serif;font-size:22px;color:#fff;letter-spacing:-.3px}
+.nav-logo .icon{font-size:24px}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{background:transparent;border:none;color:rgba(255,255,255,.65);padding:10px 18px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border-radius:8px 8px 0 0;transition:all .2s;border-bottom:3px solid transparent}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.1)}
+.nav-tab.active{color:#fff;border-bottom-color:#fff;background:rgba(255,255,255,.12)}
+.lang-pill{display:flex;gap:6px;margin-left:16px}
+.lbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 13px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.lbtn.active{background:#fff;color:var(--leaf);font-weight:600}
+
+/* ── PAGES ── */
+.page{display:none;max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:28px}
+.page-header h2{font-family:'Fraunces',serif;font-size:28px;color:var(--leaf2);margin-bottom:4px}
+.page-header p{font-size:14px;color:var(--muted)}
+.page-header .te{font-family:'Tiro Telugu',serif;font-size:13px;color:var(--muted)}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:18px;box-shadow:var(--shadow)}
+.card-body{padding:24px 28px}
+.section-divider{border:none;border-top:1px solid var(--border);margin:0}
+
+/* ── SECTION HEADING ── */
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sec-icon.g{background:var(--leaf-pale)}.sec-icon.b{background:var(--sky)}.sec-icon.s{background:#fff3e0}.sec-icon.y{background:var(--sun-pale)}
+.sec-title{font-size:14px;font-weight:600;color:var(--text)}
+.sec-sub{font-size:12px;color:var(--muted);font-family:'Tiro Telugu',serif;display:block;margin-top:1px}
+
+/* ── FORM ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.3px}
+label .tl{font-family:'Tiro Telugu',serif;font-size:11px;color:#bbb;margin-left:5px}
+input,select{border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fafafa;outline:none;transition:all .2s;width:100%}
+input:focus,select:focus{border-color:var(--leaf);background:#fff;box-shadow:0 0 0 3px rgba(42,110,42,.07)}
+input::placeholder{color:#ccc;font-size:13px}
+.phone-row{display:flex;gap:8px}
+.pfx{border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;background:#f2f2f2;font-size:14px;color:var(--muted);white-space:nowrap}
+
+/* stage picker */
+.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stage{border:2px solid var(--border);border-radius:12px;padding:13px 6px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+.stage:hover{border-color:var(--leaf);background:var(--leaf-pale)}
+.stage.sel{border-color:var(--leaf);background:var(--leaf-pale);box-shadow:0 0 0 3px rgba(42,110,42,.09)}
+.stage em{font-size:24px;display:block;margin-bottom:5px;font-style:normal}
+.stage b{font-size:11px;font-weight:600;color:var(--text);display:block}
+.stage small{font-size:10px;color:var(--muted);font-family:'Tiro Telugu',serif;display:block;margin-top:2px}
+
+/* acres */
+.acres-row{display:flex;align-items:center;gap:14px}
+.inp-unit{position:relative;max-width:130px}
+.inp-unit input{padding-right:52px}
+.unit-lbl{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:linear-gradient(to right,var(--leaf) 0%,var(--leaf) var(--p,10%),#e0e0e0 var(--p,10%));border:none;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--leaf);border:2px solid #fff;box-shadow:0 2px 5px rgba(42,110,42,.35);cursor:pointer}
+
+/* validation */
+.err{font-size:11px;color:var(--red);display:none;margin-top:3px}
+.field.bad input,.field.bad select{border-color:var(--red)}
+.field.bad .err{display:block}
+#stage-err{font-size:11px;color:var(--red);display:none;margin-top:6px}
+
+/* submit */
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--leaf) 0%,var(--leaf2) 100%);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(42,110,42,.3)}
+.btn-submit:active{transform:none}
+
+/* success */
+.success{display:none;text-align:center;padding:40px 28px}
+.sicon{width:72px;height:72px;background:var(--leaf-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;animation:pop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.stitle{font-family:'Fraunces',serif;font-size:24px;color:var(--leaf);margin-bottom:6px}
+.ssub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.sum-box{background:var(--leaf-pale);border:1px solid var(--leaf-mid);border-radius:12px;padding:16px;text-align:left;margin-bottom:20px}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--leaf-mid);font-size:13px}
+.sum-row:last-child{border:none}
+.sum-row .k{color:var(--muted)}.sum-row .v{font-weight:600}
+.btn-more{background:transparent;border:2px solid var(--leaf);color:var(--leaf);border-radius:10px;padding:10px 22px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+.btn-more:hover{background:var(--leaf-pale)}
+
+/* ── DASHBOARD ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--white);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.stat-icon{font-size:26px}
+.stat-val{font-family:'Fraunces',serif;font-size:26px;color:var(--leaf2);line-height:1}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+
+.farmer-table{width:100%;border-collapse:collapse}
+.farmer-table th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--border);letter-spacing:.4px}
+.farmer-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+.farmer-table tr:last-child td{border:none}
+.farmer-table tr:hover td{background:#fafafa}
+.avatar{width:36px;height:36px;border-radius:10px;background:var(--leaf-pale);display:inline-flex;align-items:center;justify-content:center;font-size:18px;margin-right:10px;vertical-align:middle}
+.fname{font-weight:600;color:var(--text)}
+.fmeta{font-size:12px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge.HIGH{background:var(--red-pale);color:var(--red)}
+.badge.MEDIUM{background:var(--amber-pale);color:var(--amber)}
+.badge.LOW{background:var(--leaf-pale);color:var(--leaf)}
+.badge.loading{background:#f0f0f0;color:#aaa}
+.btn-view{background:var(--leaf-pale);border:none;color:var(--leaf);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+.btn-view:hover{background:var(--leaf-mid)}
+.btn-del{background:var(--red-pale);border:none;color:var(--red);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;transition:all .2s;margin-left:4px}
+.btn-del:hover{background:#f5c6c2}
+.empty-dash{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+.empty-dash .ei{font-size:40px;display:block;margin-bottom:10px}
+
+/* ── ALERTS / WHATSAPP PAGE ── */
+.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.farmer-select-bar{background:var(--white);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.farmer-select-bar label{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.farmer-select-bar select{flex:1;min-width:180px;max-width:300px}
+.btn-gen{background:linear-gradient(135deg,var(--leaf),var(--leaf2));border:none;color:#fff;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-gen:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,110,42,.3)}
+
+/* risk panel */
+.risk-panel{background:var(--white);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.risk-panel h3{font-family:'Fraunces',serif;font-size:18px;color:var(--leaf2);margin-bottom:14px}
+.weather-chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--sky);color:var(--water);border-radius:20px;padding:5px 13px;font-size:12px;font-weight:500}
+.disease-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.disease-row:last-child{border:none}
+.d-emoji{font-size:20px;flex-shrink:0;margin-top:1px}
+.d-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.d-advice{font-size:12px;color:var(--muted);line-height:1.5}
+.d-level{margin-left:auto;flex-shrink:0}
+
+/* whatsapp panel */
+.wa-panel{background:var(--white);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.wa-panel h3{font-family:'Fraunces',serif;font-size:18px;color:var(--leaf2);margin-bottom:14px}
+.wa-phone-mock{background:#e5ddd5;border-radius:14px;overflow:hidden;min-height:300px}
+.wa-header{background:#075e54;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.wa-av{width:36px;height:36px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.wa-name{color:#fff;font-size:14px;font-weight:600}
+.wa-status{color:rgba(255,255,255,.7);font-size:11px}
+.wa-body{padding:14px 12px;display:flex;flex-direction:column;gap:10px}
+.wa-bubble{background:#fff;border-radius:4px 14px 14px 14px;padding:10px 14px;max-width:88%;box-shadow:0 1px 3px rgba(0,0,0,.1);font-size:12.5px;line-height:1.55;color:#1a1a1a;white-space:pre-wrap;word-break:break-word}
+.wa-time{font-size:10px;color:#aaa;text-align:right;margin-top:4px}
+
+/* card-style alert */
+.alert-card-preview{background:linear-gradient(135deg,var(--leaf-pale),var(--sky));border:1px solid var(--leaf-mid);border-radius:14px;padding:18px;margin-top:14px;font-size:13px;line-height:1.7}
+.alert-card-preview .ac-title{font-family:'Fraunces',serif;font-size:17px;color:var(--leaf2);margin-bottom:10px}
+.ac-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--leaf-mid);font-size:12px}
+.ac-row:last-child{border:none}
+
+.copy-btn{background:var(--leaf-pale);border:1px solid var(--leaf-mid);color:var(--leaf);border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;margin-top:12px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.copy-btn:hover{background:var(--leaf-mid)}
+.copy-btn.copied{background:var(--leaf);color:#fff}
+
+.placeholder-msg{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.placeholder-msg .pi{font-size:36px;display:block;margin-bottom:10px}
+
+/* spinner */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* toast */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--leaf2);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:700px){
+  .grid2,.stages{grid-template-columns:1fr 1fr}
+  .stages{grid-template-columns:repeat(2,1fr)}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .alert-grid{grid-template-columns:1fr}
+  .farmer-table th:nth-child(3),.farmer-table td:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-inner">
+    <div class="nav-logo"><span class="icon">🌾</span><span>PaddyShield</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('register')">➕ <span class="en">Register</span><span class="te" style="display:none">నమోదు</span></button>
+      <button class="nav-tab" onclick="showPage('dashboard')">📊 <span class="en">Dashboard</span><span class="te" style="display:none">డాష్‌బోర్డ్</span></button>
+      <button class="nav-tab" onclick="showPage('alerts')">📱 <span class="en">Alerts</span><span class="te" style="display:none">హెచ్చరికలు</span></button>
+    </div>
+    <div class="lang-pill">
+      <button class="lbtn active" onclick="setLang('en')">EN</button>
+      <button class="lbtn" onclick="setLang('te')">తె</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════
+     PAGE 1 — REGISTER
+════════════════════════════════════ -->
+<div class="page active" id="page-register">
+  <div class="page-header">
+    <h2><span class="en">Farmer Registration</span><span class="te" style="display:none">రైతు నమోదు</span></h2>
+    <p class="en">Add a new farmer to receive weekly paddy disease alerts</p>
+    <p class="te" style="display:none;font-family:'Tiro Telugu',serif">వారపు వ్యాధి హెచ్చరికలు అందుకోవడానికి కొత్త రైతును జోడించండి</p>
+  </div>
+
+  <div class="card" id="reg-form">
+    <!-- personal -->
+    <div class="card-body">
+      <div class="sec-head"><div class="sec-icon g">👤</div>
+        <div><div class="sec-title"><span class="en">Personal Information</span><span class="te" style="display:none">వ్యక్తిగత సమాచారం</span></div>
+        <span class="sec-sub en">వ్యక్తిగత సమాచారం</span><span class="sec-sub te" style="display:none">Personal Information</span></div>
+      </div>
+      <div class="grid2">
+        <div class="field" id="f-name">
+          <label><span class="en">Full Name</span><span class="te" style="display:none">పూర్తి పేరు</span><span class="tl en">పూర్తి పేరు</span><span class="tl te" style="display:none">Full Name</span></label>
+          <input type="text" id="inp-name" placeholder="e.g. Ravi Kumar"/>
+          <span class="err en">Please enter name</span><span class="err te" style="display:none">పేరు నమోదు చేయండి</span>
+        </div>
+        <div class="field" id="f-phone">
+          <label><span class="en">Phone Number</span><span class="te" style="display:none">ఫోన్ నంబర్</span></label>
+          <div class="phone-row"><span class="pfx">+91</span><input type="tel" id="inp-phone" placeholder="98765 43210" maxlength="10"/></div>
+          <span class="err en">Enter valid 10-digit number</span><span class="err te" style="display:none">సరైన నంబర్ నమోదు చేయండి</span>
+        </div>
+      </div>
+    </div>
+    <hr class="section-divider"/>
+
+    <!-- location -->
+    <div class="card-body">
+      <div class="sec-head"><div class="sec-icon s">📍</div>
+        <div><div class="sec-title"><span class="en">Village & Location</span><span class="te" style="display:none">గ్రామం & స్థానం</span></div>
+        <span class="sec-sub en">గ్రామం & స్థానం</span><span class="sec-sub te" style="display:none">Village & Location</span></div>
+      </div>
+      <div class="grid2">
+        <div class="field" id="f-village">
+          <label><span class="en">Village Name</span><span class="te" style="display:none">గ్రామం పేరు</span></label>
+          <input type="text" id="inp-village" placeholder="e.g. Quthbullapur"/>
+          <span class="err en">Enter village name</span><span class="err te" style="display:none">గ్రామం పేరు నమోదు చేయండి</span>
+        </div>
+        <div class="field" id="f-mandal">
+          <label><span class="en">Mandal / District</span><span class="te" style="display:none">మండలం / జిల్లా</span></label>
+          <input type="text" id="inp-mandal" placeholder="e.g. Medak"/>
+          <span class="err en">Enter mandal/district</span><span class="err te" style="display:none">మండలం నమోదు చేయండి</span>
+        </div>
+      </div>
+    </div>
+    <hr class="section-divider"/>
+
+    <!-- crop stage -->
+    <div class="card-body">
+      <div class="sec-head"><div class="sec-icon g">🌱</div>
+        <div><div class="sec-title"><span class="en">Crop Growth Stage</span><span class="te" style="display:none">పంట పెరుగుదల దశ</span></div></div>
+      </div>
+      <div class="stages">
+        <div class="stage" onclick="pickStage(this,'seedling')"><em>🌱</em><b class="en">Seedling</b><b class="te" style="display:none">మొలక</b><small class="en">మొలక దశ</small><small class="te" style="display:none">Seedling</small></div>
+        <div class="stage" onclick="pickStage(this,'tillering')"><em>🌿</em><b class="en">Tillering</b><b class="te" style="display:none">కుశ దశ</b><small class="en">కుశ దశ</small><small class="te" style="display:none">Tillering</small></div>
+        <div class="stage" onclick="pickStage(this,'flowering')"><em>🌸</em><b class="en">Flowering</b><b class="te" style="display:none">పూత దశ</b><small class="en">పూత దశ</small><small class="te" style="display:none">Flowering</small></div>
+        <div class="stage" onclick="pickStage(this,'grain_filling')"><em>🌾</em><b class="en">Grain Filling</b><b class="te" style="display:none">గింజ దశ</b><small class="en">గింజ దశ</small><small class="te" style="display:none">Grain Filling</small></div>
+      </div>
+      <div id="stage-err"><span class="en">Please select a crop stage</span><span class="te" style="display:none">పంట దశ ఎంచుకోండి</span></div>
+    </div>
+    <hr class="section-divider"/>
+
+    <!-- field size -->
+    <div class="card-body">
+      <div class="sec-head"><div class="sec-icon y">📐</div>
+        <div><div class="sec-title"><span class="en">Field Size</span><span class="te" style="display:none">పొలం పరిమాణం</span></div></div>
+      </div>
+      <div class="field" id="f-acres">
+        <label><span class="en">Total paddy field area</span><span class="te" style="display:none">మొత్తం వరి పొలం వైశాల్యం</span></label>
+        <div class="acres-row">
+          <div class="inp-unit">
+            <input type="number" id="inp-acres" min=".5" max="50" step=".5" value="2" oninput="syncSlider(this.value)"/>
+            <span class="unit-lbl en">acres</span><span class="unit-lbl te" style="display:none">ఎకరాలు</span>
+          </div>
+          <input type="range" id="acres-sl" min=".5" max="50" step=".5" value="2" oninput="syncAcres(this.value)"/>
+        </div>
+        <span class="err en">Enter valid size</span><span class="err te" style="display:none">సరైన పరిమాణం నమోదు చేయండి</span>
+      </div>
+    </div>
+    <hr class="section-divider"/>
+
+    <!-- submit -->
+    <div class="card-body">
+      <button class="btn-submit" onclick="submitFarmer()">
+        <span>✅</span>
+        <span class="en">Register Farmer</span><span class="te" style="display:none">రైతును నమోదు చేయండి</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- success -->
+  <div class="card" id="reg-success" style="display:none">
+    <div class="success">
+      <div class="sicon">🎉</div>
+      <div class="stitle en">Farmer Registered!</div>
+      <div class="stitle te" style="display:none">రైతు నమోదు అయ్యారు!</div>
+      <div class="ssub en">Weekly risk alerts will be sent to this farmer.</div>
+      <div class="ssub te" style="display:none">వారపు హెచ్చరికలు పంపబడతాయి.</div>
+      <div class="sum-box" id="sum-box"></div>
+      <button class="btn-more" onclick="resetForm()"><span class="en">+ Add Another Farmer</span><span class="te" style="display:none">+ మరొక రైతును జోడించండి</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     PAGE 2 — DASHBOARD
+════════════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="page-header">
+    <h2><span class="en">Farmer Dashboard</span><span class="te" style="display:none">రైతుల డాష్‌బోర్డ్</span></h2>
+    <p class="en">Overview of all registered farmers and their disease risk levels</p>
+    <p class="te" style="display:none;font-family:'Tiro Telugu',serif">నమోదైన రైతులు మరియు వ్యాధి ప్రమాద స్థాయిల అవలోకనం</p>
+  </div>
+
+  <!-- stats -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card"><span class="stat-icon">👨‍🌾</span><div><div class="stat-val" id="st-total">0</div><div class="stat-lbl en">Total Farmers</div><div class="stat-lbl te" style="display:none">మొత్తం రైతులు</div></div></div>
+    <div class="stat-card"><span class="stat-icon">🔴</span><div><div class="stat-val" id="st-high" style="color:var(--red)">0</div><div class="stat-lbl en">High Risk</div><div class="stat-lbl te" style="display:none">అధిక ప్రమాదం</div></div></div>
+    <div class="stat-card"><span class="stat-icon">🌱</span><div><div class="stat-val" id="st-acres">0</div><div class="stat-lbl en">Total Acres</div><div class="stat-lbl te" style="display:none">మొత్తం ఎకరాలు</div></div></div>
+    <div class="stat-card"><span class="stat-icon">📍</span><div><div class="stat-val" id="st-villages">0</div><div class="stat-lbl en">Villages</div><div class="stat-lbl te" style="display:none">గ్రామాలు</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-body" style="padding-bottom:0">
+      <div class="sec-head"><div class="sec-icon g">📋</div>
+        <div class="sec-title"><span class="en">Registered Farmers</span><span class="te" style="display:none">నమోదైన రైతులు</span></div>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="farmer-table" id="farmer-table">
+        <thead>
+          <tr>
+            <th><span class="en">Farmer</span><span class="te" style="display:none">రైతు</span></th>
+            <th><span class="en">Location</span><span class="te" style="display:none">స్థానం</span></th>
+            <th><span class="en">Stage / Acres</span><span class="te" style="display:none">దశ / ఎకరాలు</span></th>
+            <th><span class="en">Top Risk</span><span class="te" style="display:none">ప్రమాదం</span></th>
+            <th><span class="en">Actions</span><span class="te" style="display:none">చర్యలు</span></th>
+          </tr>
+        </thead>
+        <tbody id="farmer-tbody">
+          <tr><td colspan="5"><div class="empty-dash"><span class="ei">👨‍🌾</span><span class="en">No farmers yet. Register one first!</span><span class="te" style="display:none">రైతులు లేరు. ముందు నమోదు చేయండి!</span></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     PAGE 3 — ALERTS
+════════════════════════════════════ -->
+<div class="page" id="page-alerts">
+  <div class="page-header">
+    <h2><span class="en">WhatsApp Alert Preview</span><span class="te" style="display:none">వాట్సాప్ హెచ్చరిక పూర్వావలోకనం</span></h2>
+    <p class="en">Generate and preview the weekly disease alert for any farmer</p>
+    <p class="te" style="display:none;font-family:'Tiro Telugu',serif">ఏ రైతుకైనా వారపు వ్యాధి హెచ్చరికను రూపొందించండి</p>
+  </div>
+
+  <div class="farmer-select-bar">
+    <label><span class="en">Select Farmer:</span><span class="te" style="display:none">రైతు ఎంచుకోండి:</span></label>
+    <select id="alert-select"><option value="">-- Select a farmer --</option></select>
+    <button class="btn-gen" onclick="generateAlert()">
+      <span id="gen-spin" style="display:none" class="spin"></span>
+      <span class="en">Generate Alert</span><span class="te" style="display:none">హెచ్చరిక రూపొందించు</span>
+    </button>
+  </div>
+
+  <div id="alert-placeholder">
+    <div class="card"><div class="placeholder-msg"><span class="pi">📱</span><span class="en">Select a farmer and click Generate Alert to see the WhatsApp preview</span><span class="te" style="display:none">రైతు ఎంచుకుని హెచ్చరిక రూపొందించు నొక్కండి</span></div></div>
+  </div>
+
+  <div id="alert-content" style="display:none">
+    <div class="alert-grid">
+      <!-- left: risk panel -->
+      <div class="risk-panel" id="risk-panel">
+        <h3><span class="en">Disease Risk Report</span><span class="te" style="display:none">వ్యాధి ప్రమాద నివేదిక</span></h3>
+        <div class="weather-chips" id="weather-chips"></div>
+        <div id="disease-list"></div>
+      </div>
+
+      <!-- right: whatsapp + card -->
+      <div>
+        <div class="wa-panel">
+          <h3>💬 <span class="en">WhatsApp Preview</span><span class="te" style="display:none">వాట్సాప్ పూర్వావలోకనం</span></h3>
+          <div class="wa-phone-mock">
+            <div class="wa-header">
+              <div class="wa-av">🌾</div>
+              <div><div class="wa-name">PaddyShield Bot</div><div class="wa-status">online</div></div>
+            </div>
+            <div class="wa-body">
+              <div class="wa-bubble" id="wa-bubble">—</div>
+              <div class="wa-time" id="wa-time"></div>
+            </div>
+          </div>
+          <button class="copy-btn" id="copy-btn" onclick="copyWA()">📋 <span class="en">Copy Message</span><span class="te" style="display:none">సందేశం కాపీ చేయండి</span></button>
+        </div>
+
+        <div class="risk-panel" style="margin-top:16px">
+          <h3>🃏 <span class="en">Alert Card Format</span><span class="te" style="display:none">హెచ్చరిక కార్డ్</span></h3>
+          <div class="alert-card-preview" id="alert-card">
+            <div class="ac-title" id="ac-title">—</div>
+            <div id="ac-rows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────
+let farmers = [];
+let selStage = '';
+let lang = 'en';
+let lastWAText = '';
+
+const stageEmoji = {seedling:'🌱',tillering:'🌿',flowering:'🌸',grain_filling:'🌾'};
+const stageLabel = {
+  seedling:     {en:'Seedling',    te:'మొలక'},
+  tillering:    {en:'Tillering',   te:'కుశ దశ'},
+  flowering:    {en:'Flowering',   te:'పూత దశ'},
+  grain_filling:{en:'Grain Filling',te:'గింజ దశ'},
+};
+
+// ── LANG ───────────────────────────────────
+function setLang(l){
+  lang = l;
+  document.querySelectorAll('.en').forEach(e=>e.style.display=l==='en'?'':'none');
+  document.querySelectorAll('.te').forEach(e=>e.style.display=l==='te'?'':'none');
+  document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lbtn:${l==='en'?'first':'last'}-child`).classList.add('active');
+}
+
+// ── PAGES ──────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(id==='dashboard') loadDashboard();
+  if(id==='alerts')    loadAlertSelect();
+}
+
+// ── ACRES SLIDER ───────────────────────────
+function syncSlider(v){const s=document.getElementById('acres-sl');s.value=v;s.style.setProperty('--p',((v-.5)/49.5*100)+'%')}
+function syncAcres(v){document.getElementById('inp-acres').value=v;document.getElementById('acres-sl').style.setProperty('--p',((v-.5)/49.5*100)+'%')}
+syncSlider(2);
+
+// ── STAGE PICKER ───────────────────────────
+function pickStage(el,s){
+  document.querySelectorAll('.stage').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); selStage=s;
+  document.getElementById('stage-err').style.display='none';
+}
+
+// ── VALIDATE ───────────────────────────────
+function validate(){
+  let ok=true;
+  [{id:'f-name',inp:'inp-name',fn:v=>v.trim().length>1},
+   {id:'f-phone',inp:'inp-phone',fn:v=>/^\d{10}$/.test(v.replace(/\s/g,''))},
+   {id:'f-village',inp:'inp-village',fn:v=>v.trim().length>1},
+   {id:'f-mandal',inp:'inp-mandal',fn:v=>v.trim().length>1},
+   {id:'f-acres',inp:'inp-acres',fn:v=>parseFloat(v)>0},
+  ].forEach(({id,inp,fn})=>{
+    const w=document.getElementById(id),v=document.getElementById(inp).value;
+    w.classList.toggle('bad',!fn(v)); if(!fn(v)) ok=false;
+  });
+  if(!selStage){document.getElementById('stage-err').style.display='block';ok=false;}
+  return ok;
+}
+
+// ── SUBMIT ─────────────────────────────────
+async function submitFarmer(){
+  if(!validate()) return;
+  const body={
+    name:   document.getElementById('inp-name').value.trim(),
+    phone:  '+91 '+document.getElementById('inp-phone').value.trim(),
+    village:document.getElementById('inp-village').value.trim(),
+    mandal: document.getElementById('inp-mandal').value.trim(),
+    stage:  selStage,
+    acres:  document.getElementById('inp-acres').value,
+  };
+  try{
+    const r=await fetch('/api/farmers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(d.ok){ farmers=await (await fetch('/api/farmers')).json(); showSuccess(d.farmer); }
+  } catch(e){ toast('⚠️ Could not save — is the server running?'); }
+}
+
+function showSuccess(f){
+  const rows=[
+    {en:'Name',te:'పేరు',v:f.name},
+    {en:'Phone',te:'ఫోన్',v:f.phone},
+    {en:'Village',te:'గ్రామం',v:f.village+', '+f.mandal},
+    {en:'Stage',te:'దశ',v:stageEmoji[f.stage]+' '+stageLabel[f.stage][lang]},
+    {en:'Field',te:'పొలం',v:f.acres+' acres'},
+  ];
+  document.getElementById('sum-box').innerHTML=rows.map(r=>`<div class="sum-row"><span class="k">${lang==='en'?r.en:r.te}</span><span class="v">${r.v}</span></div>`).join('');
+  document.getElementById('reg-form').style.display='none';
+  document.getElementById('reg-success').style.display='block';
+  setLang(lang);
+}
+
+function resetForm(){
+  document.getElementById('reg-form').style.display='block';
+  document.getElementById('reg-success').style.display='none';
+  ['inp-name','inp-phone','inp-village','inp-mandal'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('inp-acres').value=2; syncSlider(2);
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('sel'));
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('bad'));
+  selStage='';
+}
+
+// ── DASHBOARD ──────────────────────────────
+async function loadDashboard(){
+  farmers=await (await fetch('/api/farmers')).json();
+  document.getElementById('st-total').textContent=farmers.length;
+  document.getElementById('st-acres').textContent=farmers.reduce((s,f)=>s+parseFloat(f.acres||0),0).toFixed(1);
+  const vils=new Set(farmers.map(f=>f.village.toLowerCase()));
+  document.getElementById('st-villages').textContent=vils.size;
+
+  const tbody=document.getElementById('farmer-tbody');
+  if(!farmers.length){
+    tbody.innerHTML=`<tr><td colspan="5"><div class="empty-dash"><span class="ei">👨‍🌾</span><span class="en">No farmers yet. Register one first!</span><span class="te" style="display:none">రైతులు లేరు!</span></div></td></tr>`;
+    setLang(lang); return;
+  }
+  tbody.innerHTML=farmers.map(f=>`
+    <tr>
+      <td><span class="avatar">${stageEmoji[f.stage]||'👤'}</span><span class="fname">${f.name}</span><br><span class="fmeta">${f.phone}</span></td>
+      <td>${f.village}<br><span class="fmeta">${f.mandal}</span></td>
+      <td>${stageLabel[f.stage]?.[lang]||f.stage}<br><span class="fmeta">${f.acres} acres</span></td>
+      <td><span class="badge loading" id="risk-${f.id}">Loading…</span></td>
+      <td>
+        <button class="btn-view" onclick="goAlert(${f.id})">📱 Alert</button>
+        <button class="btn-del" onclick="deleteFarmer(${f.id})" title="Delete">🗑️</button>
+      </td>
+    </tr>`).join('');
+  setLang(lang);
+  document.getElementById('st-high').textContent='…';
+  // load risks in background
+  fetch('/api/risk/all').then(r=>r.json()).then(results=>{
+    let highCount=0;
+    results.forEach(res=>{
+      const top=res.risks.sort((a,b)=>b.score-a.score)[0];
+      const el=document.getElementById('risk-'+res.farmer.id);
+      if(el){ el.className='badge '+top.level; el.textContent=top.emoji+' '+top.level; }
+      if(top.level==='HIGH') highCount++;
+    });
+    document.getElementById('st-high').textContent=highCount;
+  }).catch(()=>{});
+}
+
+async function deleteFarmer(id){
+  if(!confirm('Delete this farmer?')) return;
+  await fetch('/api/farmers/'+id,{method:'DELETE'});
+  farmers=farmers.filter(f=>f.id!==id);
+  loadDashboard();
+  toast('🗑️ Farmer removed');
+}
+
+function goAlert(id){
+  showPage('alerts');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===2));
+  document.getElementById('alert-select').value=id;
+  generateAlert();
+}
+
+// ── ALERTS ─────────────────────────────────
+async function loadAlertSelect(){
+  farmers=await (await fetch('/api/farmers')).json();
+  const sel=document.getElementById('alert-select');
+  sel.innerHTML='<option value="">-- Select a farmer --</option>'+
+    farmers.map(f=>`<option value="${f.id}">${f.name} — ${f.village}</option>`).join('');
+}
+
+async function generateAlert(){
+  const id=document.getElementById('alert-select').value;
+  if(!id){ toast('Please select a farmer first'); return; }
+  document.getElementById('gen-spin').style.display='inline-block';
+  try{
+    const d=await (await fetch('/api/risk/'+id)).json();
+    renderAlert(d);
+    document.getElementById('alert-placeholder').style.display='none';
+    document.getElementById('alert-content').style.display='block';
+  } catch(e){ toast('⚠️ Could not load — check server'); }
+  finally{ document.getElementById('gen-spin').style.display='none'; }
+}
+
+function renderAlert(d){
+  // weather chips
+  const w=d.weather;
+  document.getElementById('weather-chips').innerHTML=
+    `<span class="chip">💧 ${w.humidity}% humidity</span>`+
+    `<span class="chip">🌧️ ${w.rainfall}mm rain</span>`+
+    `<span class="chip">🌡️ ${w.temp_min}–${w.temp_max}°C</span>`+
+    `<span class="chip">${w.source==='live'?'📡 Live':'🔁 Simulated'}</span>`;
+
+  // disease list
+  document.getElementById('disease-list').innerHTML=d.risks.map(r=>`
+    <div class="disease-row">
+      <span class="d-emoji">${r.emoji}</span>
+      <div style="flex:1"><div class="d-name">${r.disease}</div><div class="d-advice">${r.advice}</div></div>
+      <span class="d-level"><span class="badge ${r.level}">${r.level}</span></span>
+    </div>`).join('');
+
+  // whatsapp bubble
+  const wa=d.whatsapp_text;
+  lastWAText=wa;
+  // bold *text* → <b>
+  document.getElementById('wa-bubble').innerHTML=wa.replace(/\*(.+?)\*/g,'<b>$1</b>');
+  document.getElementById('wa-time').textContent=d.generated;
+
+  // alert card
+  document.getElementById('ac-title').textContent='🌾 '+d.farmer.name+' — '+d.farmer.village;
+  document.getElementById('ac-rows').innerHTML=
+    [...d.risks.map(r=>`<div class="ac-row"><span>${r.emoji} ${r.disease}</span><span><b>${r.level}</b></span></div>`),
+     `<div class="ac-row"><span>📅 Generated</span><span>${d.generated}</span></div>`,
+     `<div class="ac-row"><span>🌱 Stage</span><span>${stageLabel[d.farmer.stage]?.[lang]||d.farmer.stage}</span></div>`,
+    ].join('');
+
+  document.getElementById('copy-btn').textContent='📋 Copy Message';
+  document.getElementById('copy-btn').classList.remove('copied');
+}
+
+function copyWA(){
+  navigator.clipboard.writeText(lastWAText).then(()=>{
+    const b=document.getElementById('copy-btn');
+    b.textContent='✅ Copied!'; b.classList.add('copied');
+    setTimeout(()=>{ b.textContent='📋 Copy Message'; b.classList.remove('copied'); },2000);
+  });
+}
+
+// ── TOAST ──────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ───────────────────────────────────
+(async()=>{ farmers=await (await fetch('/api/farmers')).json(); })();
+</script>
+</body>
+</html>
